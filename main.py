@@ -1,8 +1,10 @@
 import pygame
-import random
+from random import randint
 import os
 import sys
 
+
+BOX = {1: [[[0, 0], [1, 0], [1, 1], [0, 1]]]}
 
 pygame.init()
 
@@ -26,16 +28,34 @@ class Board:
                     self.cell_size), 1)
 
 
+class Figure:
+    def __init__(self, screen, type_figure, color, x, y, box, turn):
+        self.screen = screen
+        self.box = box
+        self.turn = turn
+        self.x = x * 40 + 20
+        self.y = y * 40
+        self.type_figure = type_figure
+        self.color = color
+        self.w, self.h = 40, 40
+
+    def render(self):
+        for i in self.box[self.type_figure][self.turn]:
+            pygame.draw.rect(self.screen, self.color, (self.x + i[0] * 40, self.y + i[1] * 40, self.w, self.h))
+
+
 # Основная функция
 def main():
     pygame.init()
     # Создаем поле
     size = 800, 800
     screen = pygame.display.set_mode(size)
-    pygame.display.set_caption('Координаты клетки')
+    pygame.display.set_caption('Tetris')
 
     # игровое поле 10 на 20
     board = Board(10, 20)
+    # новая фигура
+    new_figure = True
 
     running = True
     while running:
@@ -44,6 +64,11 @@ def main():
                 running = False
         screen.fill('black')
         board.render(screen)
+
+        if new_figure:
+            f = Figure(screen, 1, 'yellow', 4, 0, BOX, 0)
+            f.render()
+
         pygame.display.flip()
     pygame.quit()
 
